@@ -13,6 +13,33 @@ public class BinaryTree {
         root = null;
     }
 
+    public static void main(String[] args) {
+        BinaryTree tree = new BinaryTree();
+        /*tree.insert(1, 'A');
+        tree.insert(2, 'B');
+        tree.insert(3, 'C');
+        tree.insert(4, 'D');
+        tree.insert(5, 'E');
+        tree.insert(6, 'F');
+        tree.insert(7, 'G');
+        tree.insert(8, 'H');
+        tree.insert(9, 'I');
+        tree.insert(10, 'J');
+        tree.insert(11, 'K');
+        tree.insert(12, 'L');
+        tree.insert(13, 'M');
+        tree.insert(14, 'N');
+        tree.insert(15, 'O');
+        tree.insert(16, 'P');
+        tree.insert(17, 'Q');
+        tree.insert(18, 'R');*/
+        tree.parseTreeString("(A(G(j)(1))(z(5)))");
+        tree.parseTreeString("(A(G(j)(1(ab))(z(5)))");
+        tree.displayTree();
+
+
+    }
+
     public Node find(int key) {
         Node current = root;
         while (current.iData != key) {
@@ -23,7 +50,7 @@ public class BinaryTree {
         return current;
     }
 
-    public void insert(int id, double dd) {
+    public void insert(int id, char dd) {
         Node newNode = new Node();
         newNode.iData = id;
         newNode.dData = dd;
@@ -160,6 +187,34 @@ public class BinaryTree {
         }
     }
 
+    private int getRandomInt() {
+        return (int) (Math.random() * 1000);
+    }
+
+    public void parseTreeString(String treeString) {
+        Stack stack = new Stack();
+        if (treeString.length() != 0) {
+            for (char inString : treeString.toCharArray()) {
+                if (inString == '(') {
+                    this.insert(getRandomInt(), inString);
+                    stack.push(inString);
+                } else if (inString == ')') {
+                    stack.pop();
+                } else {
+                    if (stack.isEmpty()) {
+                        this.insert(getRandomInt(), inString);
+                        stack.push(inString);
+                    } else {
+                        this.insert(Integer.parseInt((String) stack.pop()), inString);
+
+                    }
+
+                }
+            }
+
+        }
+    }
+
     public void displayTree() {
         Stack globalStack = new Stack();
         globalStack.push(root);
@@ -195,7 +250,7 @@ public class BinaryTree {
 
     public class Node {
         public int iData;              // data item (key)
-        public double dData;           // data item
+        public char dData;           // data item
         public Node leftChild;         // this node's left child
         public Node rightChild;        // this node's right child
     }
