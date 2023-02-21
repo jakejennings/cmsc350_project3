@@ -1,53 +1,109 @@
 package Project3;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class BinaryTree {
 
     private Node root;
+    private int leftSize;
+    private int rightSize;
+    private boolean isProperBoolean;
+    private String outputString = "";
 
 
 // -------------------------------------------------------------
 
-    public BinaryTree() {
+    public BinaryTree(String inputString) {
         root = null;
+        leftSize = 0;
+        rightSize = 0;
+        isProperBoolean = true;
+        String outputString = "";
+        parseTreeString(inputString);
     }
 
     public static void main(String[] args) {
-        BinaryTree tree = new BinaryTree();
-        /*tree.insert(1, 'A');
-        tree.insert(2, 'B');
-        tree.insert(3, 'C');
-        tree.insert(4, 'D');
-        tree.insert(5, 'E');
-        tree.insert(6, 'F');
-        tree.insert(7, 'G');
-        tree.insert(8, 'H');
-        tree.insert(9, 'I');
-        tree.insert(10, 'J');
-        tree.insert(11, 'K');
-        tree.insert(12, 'L');
-        tree.insert(13, 'M');
-        tree.insert(14, 'N');
-        tree.insert(15, 'O');
-        tree.insert(16, 'P');
-        tree.insert(17, 'Q');
-        tree.insert(18, 'R');*/
-        tree.parseTreeString("(A(G(j)(1))(z(5)))");
-        tree.parseTreeString("(A(G(j)(1(ab))(z(5)))");
+        //BinaryTree tree = new BinaryTree("(A(G(j)(1))(z(5)(B)))");
+        //BinaryTree tree = new BinaryTree("(A(G(j)(1))(z(5)))");
+        //BinaryTree tree = new BinaryTree("(A(G(j)(1))(z))");
+        //BinaryTree tree = new BinaryTree("(A)");
+        //BinaryTree tree = new BinaryTree("(A(B))");
+        //BinaryTree tree = new BinaryTree("(A(B(C)(D)))");
+        BinaryTree tree = new BinaryTree("(A))A(");
+        //BinaryTree tree = new BinaryTree("(A(B(C)(D))(E))");
+        //BinaryTree tree = new BinaryTree("(A(B(C)))");
+        //tree.parseTreeString("(A(G(j)(1))(z(5)))");
+        //tree.parseTreeString("(A(G(j)(1))(z(5)(B)))");
+        //tree.parseTreeString("(A(B(C)))");
+        //tree.parseTreeString("(A(G(j)(1))(z(5)))");
         tree.displayTree();
+        //System.out.println(tree.getLeftCount());
+        //System.out.println(tree.getRightCount());
+        //System.out.println(tree.isFull() + " Full");
+        //System.out.println(tree.isBalanced() + " Balanced");
+        //System.out.println(tree.isProper() + " Proper");
+        //tree.preOrder();
+        System.out.println(tree.inOrder() + " Inorder");
+        //tree.inOrder();
+        //String test = tree.inOrder();
 
+
+        //System.out.println(test.length() + " TEST");
+        //System.out.println(tree.getHeight());
+        //System.out.println(tree.getString());
 
     }
 
-    public Node find(int key) {
-        Node current = root;
-        while (current.iData != key) {
-            if (key < current.iData) current = current.leftChild;
-            else current = current.rightChild;
-            if (current == null) return null;
+    private static boolean isAlphaNumeric(char ch) {
+        return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9');
+    }
+
+    private static int countChar(String str, char ch, int ind) {
+        if (ind == str.length()) return 0;
+        int count = 0;
+        if (str.charAt(ind) == ch) count++;
+        return count + countChar(str, ch, ind + 1);
+    }
+
+    public int getNodeCount() {
+        return leftSize + rightSize + 1;
+    }
+
+    public int getHeight() {
+        if (leftSize == 3 || rightSize == 3) return 2;
+        if (leftSize == 2 || rightSize == 2) return 1;
+        return 0;
+    }
+
+    public boolean isFull() {
+        return (leftSize == 0 && rightSize == 0) || (leftSize + rightSize + 1 == 7) || (leftSize + rightSize + 1 == 3);
+
+    }
+
+    public boolean isBalanced() {
+        return (Math.abs(leftSize - rightSize) <= 1 || (leftSize == 0 && rightSize == 0));
+    }
+
+    public boolean isProper() {
+        Node localRoot = root;
+
+        return isProper(localRoot, true);
+    }
+
+    public boolean isProper(Node localRoot, Boolean testBool) {
+        if (localRoot != null) {
+            if (localRoot.leftChild == null && localRoot.rightChild == null && testBool) testBool = true;
+            else if (localRoot.leftChild != null && localRoot.rightChild != null && testBool) testBool = true;
+            else {
+                testBool = false;
+                isProperBoolean = false;
+            }
+            isProper(localRoot.leftChild, testBool);
+            isProper(localRoot.rightChild, testBool);
         }
-        return current;
+        return isProperBoolean;
     }
 
     public void insert(int id, char dd) {
@@ -78,142 +134,189 @@ public class BinaryTree {
             }
         }
     }
+    public String inOrder() {
+        outputString = "";
+        inOrder(root);
+        StringBuilder leftBuilder;
+        try {
+            leftBuilder = new StringBuilder(outputString.substring(0, leftSize + 1));
+        } catch (StringIndexOutOfBoundsException e) {
+            throw new InvalidTreeSyntax("BRUH");
+        }
 
-    public boolean delete(int key) {
-        Node current = root;
-        Node parent = root;
-
-        boolean isLeftChild = true;
-        while (current.iData != key) {
-            parent = current;
-            if (key < current.iData) {
-                isLeftChild = true;
-                current = current.leftChild;
-            } else {
-                isLeftChild = false;
-                current = current.rightChild;
+        if (leftSize == 3) {
+            leftBuilder.insert(0, "(((");
+            leftBuilder.insert(4, ")");
+            leftBuilder.insert(6, "(");
+            leftBuilder.insert(8, "))");
+            if (rightSize == 0) {
+                leftBuilder.insert(11, ")");
             }
-            if (current == null) return false;
+        }
+        if (leftSize == 2) {
+            leftBuilder.insert(0, "((");
+            leftBuilder.insert(3, ")");
+            leftBuilder.insert(5, ")");
+            leftBuilder.insert(7, ")");
+        }
+        if (leftSize == 1) {
+            leftBuilder.insert(0, "((");
+            leftBuilder.insert(3, ")");
+            leftBuilder.insert(5, ")");
+        }
+        if (leftSize == 0) {
+            leftBuilder.insert(0, "(");
+        }
+        if (leftSize == 0 && rightSize == 0) {
+            leftBuilder.insert(2, ")");
         }
 
-        if (current.leftChild == null && current.rightChild == null) {
-            if (current == root) root = null;
-            else if (isLeftChild) parent.leftChild = null;
-            else parent.rightChild = null;
-        } else if (current.rightChild == null) if (current == root) root = current.leftChild;
-        else if (isLeftChild) parent.leftChild = current.leftChild;
-        else parent.rightChild = current.leftChild;
-        else if (current.leftChild == null) if (current == root) root = current.rightChild;
-        else if (isLeftChild) parent.leftChild = current.rightChild;
-        else parent.rightChild = current.rightChild;
-        else {
-            Node successor = getSuccessor(current);
-            if (current == root) root = successor;
-            else if (isLeftChild) parent.leftChild = successor;
-            else parent.rightChild = successor;
-
-            successor.leftChild = current.leftChild;
+        StringBuilder rightBuilder = new StringBuilder(outputString.substring(leftSize + 1));
+        if (rightSize == 3) {
+            rightBuilder.insert(0, "((");
+            rightBuilder.insert(3, ")");
+            rightBuilder.insert(5, "(");
+            rightBuilder.insert(7, "))");
+        }
+        if (rightSize == 2) {
+            rightBuilder.insert(0, "((");
+            rightBuilder.insert(3, ")");
+            rightBuilder.insert(5, "))");
+        }
+        if (rightSize == 1) {
+            rightBuilder.insert(0, "(");
+            rightBuilder.insert(2, "))");
         }
 
-        return true;
+        return leftBuilder.append(rightBuilder).toString();
 
     }
-
-    private Node getSuccessor(Node delNode) {
-
-        Node successorParent = delNode;
-
-        Node successor = delNode;
-
-        Node current = delNode.rightChild;
-
-        while (current != null) {
-            successorParent = successor;
-            successor = current;
-            current = current.leftChild;
-        }
-        if (successor != delNode.rightChild) {
-            successorParent.leftChild = successor.rightChild;
-            successor.rightChild = delNode.rightChild;
-        }
-
-        return successor;
-    }
-
-    public void traverse(int traverseType) {
-
-        switch (traverseType) {
-            case 1:
-                System.out.print("\nPreorder traversal: ");
-                preOrder(root);
-                break;
-            case 2:
-                System.out.print("\nInorder traversal:  ");
-                inOrder(root);
-                break;
-            case 3:
-                System.out.print("\nPostorder traversal: ");
-                postOrder(root);
-                break;
-        }
-
-        System.out.println();
-
-    }
-
-    private void preOrder(Node localRoot) {
-        if (localRoot != null) {
-            System.out.print(localRoot.iData + " ");
-            preOrder(localRoot.leftChild);
-            preOrder(localRoot.rightChild);
-        }
-    }
-
-// -------------------------------------------------------------
 
     private void inOrder(Node localRoot) {
         if (localRoot != null) {
             inOrder(localRoot.leftChild);
-            System.out.print(localRoot.iData + " ");
+            outputString = outputString + localRoot.dData;
             inOrder(localRoot.rightChild);
         }
     }
 
-    private void postOrder(Node localRoot) {
+    public int setLeftCount() {
+        Node current = root.leftChild;
+        getSideCount(current, true);
+        return leftSize;
+    }
+
+    public int setRightCount() {
+        Node current = root.rightChild;
+        getSideCount(current, false);
+        return rightSize;
+    }
+
+    private void getSideCount(Node localRoot, Boolean isLeft) {
         if (localRoot != null) {
-            postOrder(localRoot.leftChild);
-            postOrder(localRoot.rightChild);
-            System.out.print(localRoot.iData + " ");
+            int tempInt = 0;
+            tempInt = isLeft ? leftSize++ : rightSize++;
+            getSideCount(localRoot.leftChild, isLeft);
+            getSideCount(localRoot.rightChild, isLeft);
         }
     }
-
-    private int getRandomInt() {
-        return (int) (Math.random() * 1000);
-    }
-
-    public void parseTreeString(String treeString) {
-        Stack stack = new Stack();
-        if (treeString.length() != 0) {
-            for (char inString : treeString.toCharArray()) {
-                if (inString == '(') {
-                    this.insert(getRandomInt(), inString);
-                    stack.push(inString);
-                } else if (inString == ')') {
-                    stack.pop();
-                } else {
-                    if (stack.isEmpty()) {
-                        this.insert(getRandomInt(), inString);
-                        stack.push(inString);
-                    } else {
-                        this.insert(Integer.parseInt((String) stack.pop()), inString);
-
-                    }
-
-                }
+    private boolean validateInput(String inputString) {
+        int alphaNumericCount = 0;
+        for (int i = 1; i < inputString.length() - 1; i++) {
+            if (isAlphaNumeric(inputString.charAt(i))) {
+                alphaNumericCount++;
             }
 
         }
+        if (inputString.length() == 0) {
+            return false;
+        }
+        if (inputString.charAt(0) != '(') {
+            return false;
+        }
+        if (inputString.charAt(inputString.length() - 1) != ')') {
+            return false;
+        }
+        int leftParanthesesCount = countChar(inputString, '(', 0);
+        int rightParanthesesCount = countChar(inputString, ')', 0);
+
+        if (leftParanthesesCount != rightParanthesesCount || alphaNumericCount != rightParanthesesCount) {
+            throw new InvalidTreeSyntax("Wrong Format Bro");
+        }
+        System.out.println(leftParanthesesCount + " " + rightParanthesesCount + " " + alphaNumericCount);
+        return true;
     }
+
+    public void parseTreeString(String treeString) {
+
+        try {
+            if (!validateInput(treeString)) {
+                System.out.println("Invalid Input");
+                return;
+            }
+        } catch (InvalidTreeSyntax e) {
+            throw new InvalidTreeSyntax(e.getMessage());
+        }
+
+
+        Stack<Character> stack = new Stack<>();
+
+        List<Character> levelOne = new ArrayList<>(2);
+        List<Character> levelTwoLeft = new ArrayList<>(2);
+        List<Character> levelTwoRight = new ArrayList<>(2);
+        int tier = 0;
+        Boolean left = true;
+
+        if (treeString.length() != 0 && isAlphaNumeric(treeString.charAt(1))) {
+            for (char inString : treeString.toCharArray()) {
+
+                if (stack.size() == 1 && isAlphaNumeric(inString)) {
+                    this.insert(50, inString);
+                } else if (stack.size() == 1 && inString == '(' && levelTwoLeft.size() != 0) {
+                    left = false;
+                    stack.push(inString);
+                    tier++;
+                } else if (inString == '(') {
+                    stack.push(inString);
+                    tier++;
+                } else if (inString == ')') {
+                    stack.pop();
+                    tier--;
+                } else if (tier == 2) {
+                    levelOne.add(inString);
+                } else if (tier == 3) {
+                    if (left) levelTwoLeft.add(inString);
+                    else levelTwoRight.add(inString);
+
+                }
+            }
+            int insertKey = 40;
+            for (int i = 0; i < levelOne.size(); i++) {
+                this.insert(insertKey, levelOne.get(i));
+                insertKey = insertKey + 40;
+            }
+
+            insertKey = 35;
+            for (int i = 0; i < levelTwoLeft.size(); i++) {
+                this.insert(insertKey, levelTwoLeft.get(i));
+                insertKey = insertKey + 5;
+            }
+            insertKey = 75;
+            for (int i = 0; i < levelTwoRight.size(); i++) {
+                this.insert(insertKey, levelTwoRight.get(i));
+                insertKey = insertKey + 10;
+            }
+            setLeftCount();
+            setRightCount();
+
+            try {
+                inOrder();
+            } catch (StringIndexOutOfBoundsException e){
+                throw new InvalidTreeSyntax(e.getMessage());
+            }
+        }
+    }
+
 
     public void displayTree() {
         Stack globalStack = new Stack();
@@ -229,7 +332,7 @@ public class BinaryTree {
             while (!globalStack.isEmpty()) {
                 Node temp = (Node) globalStack.pop();
                 if (temp != null) {
-                    System.out.print(temp.iData);
+                    System.out.print(temp.iData + " " + temp.dData);
                     localStack.push(temp.leftChild);
                     localStack.push(temp.rightChild);
                     if (temp.leftChild != null || temp.rightChild != null) isRowEmpty = false;
