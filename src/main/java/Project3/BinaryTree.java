@@ -134,6 +134,7 @@ public class BinaryTree {
             }
         }
     }
+
     public String inOrder() {
         outputString = "";
         inOrder(root);
@@ -220,13 +221,32 @@ public class BinaryTree {
             getSideCount(localRoot.rightChild, isLeft);
         }
     }
+
     private boolean validateInput(String inputString) {
+        System.out.println(inputString + "DOG");
         int alphaNumericCount = 0;
+        int leftParenthesesCount = 0;
+        boolean lastCharAlphaNumeric = false;
+        boolean lastCharLeftParentheses = false;
+
         for (int i = 1; i < inputString.length() - 1; i++) {
             if (isAlphaNumeric(inputString.charAt(i))) {
                 alphaNumericCount++;
+                if (lastCharAlphaNumeric) {
+                    throw new InvalidTreeSyntax("Wrong Format. Elements must be separated by parentheses.");
+                }
+                lastCharAlphaNumeric = true;
+                lastCharLeftParentheses = false;
+            } else if (lastCharLeftParentheses && inputString.charAt(i) == ')') {
+                throw new InvalidTreeSyntax("Wrong Format Bro!");
+            } else if (inputString.charAt(i) == '(') {
+                lastCharLeftParentheses = true;
+                lastCharAlphaNumeric = false;
+                leftParenthesesCount++;
+                System.out.println(inputString.charAt(i) + "LOOK");
+            } else {
+                lastCharAlphaNumeric = false;
             }
-
         }
         if (inputString.length() == 0) {
             return false;
@@ -241,9 +261,12 @@ public class BinaryTree {
         int rightParanthesesCount = countChar(inputString, ')', 0);
 
         if (leftParanthesesCount != rightParanthesesCount || alphaNumericCount != rightParanthesesCount) {
-            throw new InvalidTreeSyntax("Wrong Format Bro");
+            throw new InvalidTreeSyntax("String format wrong");
         }
-        System.out.println(leftParanthesesCount + " " + rightParanthesesCount + " " + alphaNumericCount);
+        if (inputString.substring(0, inputString.length() - 1).contains(")))")) {
+            throw new InvalidTreeSyntax("String format wrong. Fix Parantheses");
+
+        }
         return true;
     }
 
@@ -268,26 +291,36 @@ public class BinaryTree {
         Boolean left = true;
 
         if (treeString.length() != 0 && isAlphaNumeric(treeString.charAt(1))) {
+            //boolean lastCharIsAlphaNumeric = false;
             for (char inString : treeString.toCharArray()) {
+                //if (isAlphaNumeric(inString) && lastCharIsAlphaNumeric) {
+                //System.out.println(inString);
+                // throw new InvalidTreeSyntax("Check input for errors");
 
+                //}
                 if (stack.size() == 1 && isAlphaNumeric(inString)) {
                     this.insert(50, inString);
+                    //lastCharIsAlphaNumeric = true;
                 } else if (stack.size() == 1 && inString == '(' && levelTwoLeft.size() != 0) {
                     left = false;
                     stack.push(inString);
                     tier++;
+                    //lastCharIsAlphaNumeric = false;
                 } else if (inString == '(') {
                     stack.push(inString);
                     tier++;
+                    //lastCharIsAlphaNumeric = false;
                 } else if (inString == ')') {
                     stack.pop();
                     tier--;
+                    //lastCharIsAlphaNumeric = false;
                 } else if (tier == 2) {
                     levelOne.add(inString);
+                    //lastCharIsAlphaNumeric = true;
                 } else if (tier == 3) {
+                    //lastCharIsAlphaNumeric = true;
                     if (left) levelTwoLeft.add(inString);
                     else levelTwoRight.add(inString);
-
                 }
             }
             int insertKey = 40;
@@ -311,7 +344,7 @@ public class BinaryTree {
 
             try {
                 inOrder();
-            } catch (StringIndexOutOfBoundsException e){
+            } catch (StringIndexOutOfBoundsException e) {
                 throw new InvalidTreeSyntax(e.getMessage());
             }
         }

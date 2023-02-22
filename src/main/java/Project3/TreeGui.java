@@ -100,13 +100,14 @@ public class TreeGui extends JPanel {
     /**
      * @param args
      */
-    public static void main(String[] args){
+    public static void main(String[] args) {
         JFrame frame = new JFrame("Tree");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(new TreeGui());
         frame.pack();
         frame.setVisible(true);
     }
+
     /**
      * Method popException displays polynomial syntax errors to user.
      *
@@ -115,6 +116,7 @@ public class TreeGui extends JPanel {
     private static void popException(Exception e) {
         JOptionPane.showMessageDialog(null, e.getMessage() + "\nInput is probably invalid.");
     }
+
     private static void popMessage(String message) {
         JOptionPane.showMessageDialog(null, message);
     }
