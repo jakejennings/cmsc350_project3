@@ -414,7 +414,7 @@ public class BinaryTreeTest2 {
         }
     public void inorderTraversal() {
             Node currentRoot = root;
-            inorderTraversal(root, true);
+            inorderTraversal(root, false);
     }
     public void inorderTraversal(Node root, boolean isLastNode) {
         if (root != null) {
@@ -454,7 +454,7 @@ public class BinaryTreeTest2 {
     /**
      * Node class for binary tree
      */
-    class Node {
+    static class Node {
         public int iData;              // data item (key)
         public char dData;           // data item
         public Node leftChild;         // this node's left child
