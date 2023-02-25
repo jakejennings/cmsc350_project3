@@ -1,9 +1,9 @@
 /**********************************************************************************************************************
  *
  * Name: Jacob Jennings
- * Date: February 2, 2023
+ * Date: February 20, 2023
  * Class: CMSC 350
- * Project: Project 2
+ * Project: Project 3
  * Professor: Dr. Romerl Elizes
  *
  * Class Description - Main creates the GUI for the Polynomial application. It collects the input from users and
@@ -21,13 +21,11 @@ import java.awt.*;
  * @author Jacob Jennings
  */
 public class TreeGui extends JPanel {
-    private static JTextField treeInputField;
-    private static JTextField treeOutputField;
     BinaryTree binaryTree;
 
     public TreeGui() {
         JLabel enterTreeLabel = new JLabel("Enter Tree:");
-        treeInputField = new JTextField();
+        JTextField treeInputField = new JTextField();
         JButton makeTreeButton = new JButton("Make Tree");
         JButton isBalancedButton = new JButton("Is Balanced?");
         JButton isFullButton = new JButton("Is Full?");
@@ -35,8 +33,10 @@ public class TreeGui extends JPanel {
         JButton getHeightButton = new JButton("Height");
         JButton getNodesButton = new JButton("Nodes");
         JButton getInorderButton = new JButton("Inorder");
-        JLabel resultLabelText = new JLabel("Output: ");
-        treeOutputField = new JTextField();
+        JTextField currentTreeOutputField = new JTextField();
+        JLabel currentTreeLabelText = new JLabel("Current Tree:");
+        JLabel resultLabelText = new JLabel("Inorder Output: ");
+        JTextField treeOutputField = new JTextField();
 
         setPreferredSize(new Dimension(1000, 200));
         setLayout(null);
@@ -50,6 +50,8 @@ public class TreeGui extends JPanel {
         add(getHeightButton);
         add(getNodesButton);
         add(getInorderButton);
+        add(currentTreeOutputField);
+        add(currentTreeLabelText);
         add(resultLabelText);
         add(treeOutputField);
         enterTreeLabel.setBounds(320, 15, 120, 25);
@@ -61,13 +63,17 @@ public class TreeGui extends JPanel {
         getHeightButton.setBounds(560, 70, 130, 35);
         getNodesButton.setBounds(695, 70, 130, 35);
         getInorderButton.setBounds(830, 70, 130, 35);
-        resultLabelText.setBounds(340, 160, 100, 25);
+        currentTreeLabelText.setBounds(300, 130, 100, 25);
+        currentTreeOutputField.setBounds(405, 130, 270, 25);
+        resultLabelText.setBounds(285, 160, 120, 25);
         treeOutputField.setBounds(405, 160, 270, 25);
 
         makeTreeButton.addActionListener(e -> {
             String expression = treeInputField.getText();
             try {
                 binaryTree = new BinaryTree(expression);
+                currentTreeOutputField.setText(expression);
+                treeOutputField.setText("");
             } catch (InvalidTreeSyntax ex) {
                 popException(ex);
             }
@@ -109,14 +115,18 @@ public class TreeGui extends JPanel {
     }
 
     /**
-     * Method popException displays polynomial syntax errors to user.
+     * Method popException displays Binary Tree syntax errors to user.
      *
-     * @param e
+     * @param e Exception message to be displayed
      */
     private static void popException(Exception e) {
-        JOptionPane.showMessageDialog(null, e.getMessage() + "\nInput is probably invalid.");
+        JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
 
+    /**
+     * Method popMessage displays messages to user.
+     * @param message String message to be displayed
+     */
     private static void popMessage(String message) {
         JOptionPane.showMessageDialog(null, message);
     }

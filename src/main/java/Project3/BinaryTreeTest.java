@@ -14,23 +14,25 @@
  *********************************************************************************************************************/
 package Project3;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class BinaryTreeTest {
 
     private final static int MAX_STRING_LENGTH = 22;
-    private Node root;
+    private final boolean isProperBoolean;
+    private final Node root;
     private int leftSize;
     private int rightSize;
-    private final boolean isProperBoolean;
     private String outputString = "";
 
 
 // -------------------------------------------------------------
+
+    public BinaryTreeTest() {
+        root = null;
+        leftSize = 0;
+        rightSize = 0;
+        isProperBoolean = true;
+        String outputString = "";
+    }
 
     public BinaryTreeTest(String inputString) {
         root = null;
@@ -38,7 +40,8 @@ public class BinaryTreeTest {
         rightSize = 0;
         isProperBoolean = true;
         String outputString = "";
-        parseTreeString(validateInput(inputString));
+        str2tree(inputString);
+        //parseTreeString(validateInput(inputString));
     }
 
 
@@ -63,6 +66,159 @@ public class BinaryTreeTest {
         return count + countChar(str, ch, ch_index + 1);
     }
 
+    public static Node str2tree(String s) {
+        //System.out.println(s);
+        if (s.isEmpty()) {
+            return null;
+        }
+        int firstParen = s.indexOf("(");
+        char val = s.charAt(0);
+        Node root = new Node(val);
+        if (firstParen == -1) {
+            return root;
+        }
+        int start = firstParen, leftParenCount = 0;
+        for (int i = start; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                leftParenCount++;
+            } else if (s.charAt(i) == ')') {
+                leftParenCount--;
+            }
+            if (leftParenCount == 0 && start == firstParen) {
+                root.leftChild = str2tree(s.substring(start + 1, i));
+                start = i + 1;
+            } else if (leftParenCount == 0) {
+                root.rightChild = str2tree(s.substring(start + 1, i));
+            }
+        }
+        return root;
+    }
+
+    public static void inorderTraversal(Node root, boolean isLastNode) {
+        if (root != null) {
+            boolean hasChildren = (root.leftChild != null || root.rightChild != null);
+            if (hasChildren) {
+                System.out.print("(");
+            }
+            inorderTraversal(root.leftChild, false);
+            if (hasChildren) {
+                System.out.print(")");
+            }
+            System.out.print(root.dData);
+            if (hasChildren && !isLastNode) {
+                System.out.print("(");
+            }
+            inorderTraversal(root.rightChild, isLastNode);
+            if (hasChildren && !isLastNode) {
+                System.out.print(")");
+            }
+        }
+    }
+
+    public static void inorderTraversal(Node localRoot) {
+        if (localRoot != null) {
+            if (localRoot.leftChild != null || localRoot.rightChild != null) {
+                System.out.print("(");
+            }
+            inorderTraversal(localRoot.leftChild);
+            if (localRoot.leftChild != null || localRoot.rightChild != null) {
+                System.out.print(")");
+            }
+            System.out.print(localRoot.dData);
+            if (localRoot.leftChild != null || localRoot.rightChild != null) {
+                System.out.print("(");
+            }
+            inorderTraversal(localRoot.rightChild);
+            if (localRoot.leftChild != null || localRoot.rightChild != null) {
+                System.out.print(")");
+            }
+        }
+    }
+
+    /**
+     * Method creates nodes in tree from input string
+     *
+     * @param treeString String from constructor that has been validated.
+     */
+    /*
+    private void parseTreeString(String treeString) {
+
+        Stack<Character> stack = new Stack<>();
+        List<Character> levelOne = new ArrayList<>(2);
+        List<Character> levelTwoLeft = new ArrayList<>(2);
+        List<Character> levelTwoRight = new ArrayList<>(2);
+
+        final Pattern pattern = Pattern.compile("(\\([A-Za-z0-9]+\\([A-Za-z0-9]+\\))+\\(.*", Pattern.CASE_INSENSITIVE);
+        boolean leftOne = false;
+        final Matcher matcher = pattern.matcher(treeString);
+        if (matcher.find()) {
+            leftOne = true;
+        }
+        System.out.println(leftOne);
+
+        int tier = 0;
+        Boolean left = true;
+        if (treeString.length() != 0 && isAlphaNumeric(treeString.charAt(1))) {
+            for (char inString : treeString.toCharArray()) {
+                if (stack.size() == 1 && isAlphaNumeric(inString)) {
+                    this.insert(50, inString);
+                } else if (stack.size() == 1 && inString == '(' && levelTwoLeft.size() != 0) {
+                    left = false;
+                    stack.push(inString);
+                    tier++;
+                } else if (inString == '(') {
+                    stack.push(inString);
+                    tier++;
+                } else if (inString == ')') {
+                    stack.pop();
+                    tier--;
+                } else if (tier == 2) {
+                    levelOne.add(inString);
+                } else if (tier == 3) {
+                    System.out.println(leftOne);
+                    if (left && !leftOne) levelTwoLeft.add(inString);
+                    else levelTwoRight.add(inString);
+                }
+            }
+
+            System.out.println(levelOne);
+            int insertKey = 40;
+            for (int i = 0; i < levelOne.size(); i++) {
+                this.insert(insertKey, levelOne.get(i));
+                insertKey = insertKey + 40;
+            }
+
+            insertKey = 35;
+            for (int i = 0; i < levelTwoLeft.size(); i++) {
+                System.out.println(levelTwoLeft.get(i) + " " + insertKey);
+                this.insert(insertKey, levelTwoLeft.get(i));
+                insertKey = insertKey + 5;
+            }
+            insertKey = 75;
+            for (int i = 0; i < levelTwoRight.size(); i++) {
+                this.insert(insertKey, levelTwoRight.get(i));
+                insertKey = insertKey + 10;
+            }
+            setLeftCount();
+            setRightCount();
+
+            try {
+                inOrder();
+            } catch (StringIndexOutOfBoundsException e) {
+                throw new InvalidTreeSyntax(e.getMessage());
+            }
+        }
+    }*/
+    public static void main(String[] args) throws InvalidTreeSyntax {
+        String s = "(A(B)(E))";
+        //String s = "(A(B(C)(D))(E(F)(G)))";
+
+        BinaryTreeTest binaryTree = new BinaryTreeTest();
+        Node root = str2tree(s);
+        //BinaryTreeTest root = new BinaryTreeTest(s);
+        inorderTraversal(root, true); // Output: C B D A F E G
+    }
+
     /**
      * @return number of nodes in the tree
      */
@@ -80,6 +236,39 @@ public class BinaryTreeTest {
         //if (leftSize == 1 || rightSize == 1) return 1;
         return 0;
     }
+
+    /**
+     * @param id key for node to be inserted
+     * @param dd data to be inserted into node
+     */
+    /*private void insert(int id, char dd) {
+        Node newNode = new Node();
+        newNode.iData = id;
+        newNode.dData = dd;
+        if (root == null) root = newNode;
+        else {
+            Node current = root;
+            Node parent;
+            while (true) {
+                parent = current;
+                if (id < current.iData) {
+                    current = current.leftChild;
+                    if (current == null) {
+                        parent.leftChild = newNode;
+                        return;
+                    }
+
+                } else {
+                    current = current.rightChild;
+                    if (current == null) {
+                        parent.rightChild = newNode;
+                        return;
+                    }
+
+                }
+            }
+        }
+    }*/
 
     /**
      * @return boolean true if the tree is full; otherwise, false
@@ -116,39 +305,6 @@ public class BinaryTreeTest {
             boolean leftProper = isProper(localRoot.leftChild);
             boolean rightProper = isProper(localRoot.rightChild);
             return leftProper && rightProper;
-        }
-    }
-
-    /**
-     * @param id key for node to be inserted
-     * @param dd data to be inserted into node
-     */
-    private void insert(int id, char dd) {
-        Node newNode = new Node();
-        newNode.iData = id;
-        newNode.dData = dd;
-        if (root == null) root = newNode;
-        else {
-            Node current = root;
-            Node parent;
-            while (true) {
-                parent = current;
-                if (id < current.iData) {
-                    current = current.leftChild;
-                    if (current == null) {
-                        parent.leftChild = newNode;
-                        return;
-                    }
-
-                } else {
-                    current = current.rightChild;
-                    if (current == null) {
-                        parent.rightChild = newNode;
-                        return;
-                    }
-
-                }
-            }
         }
     }
 
@@ -318,87 +474,22 @@ public class BinaryTreeTest {
         return inputString;
     }
 
-    /**
-     * Method creates nodes in tree from input string
-     *
-     * @param treeString String from constructor that has been validated.
-     */
-    private void parseTreeString(String treeString) {
-
-        Stack<Character> stack = new Stack<>();
-        List<Character> levelOne = new ArrayList<>(2);
-        List<Character> levelTwoLeft = new ArrayList<>(2);
-        List<Character> levelTwoRight = new ArrayList<>(2);
-
-        final Pattern pattern = Pattern.compile("(\\([A-Za-z0-9]+\\([A-Za-z0-9]+\\))+\\(.*", Pattern.CASE_INSENSITIVE);
-        boolean leftOne = false;
-        final Matcher matcher = pattern.matcher(treeString);
-        if (matcher.find()) {
-            leftOne = true;
-        }
-        System.out.println(leftOne);
-
-        int tier = 0;
-        Boolean left = true;
-        if (treeString.length() != 0 && isAlphaNumeric(treeString.charAt(1))) {
-            for (char inString : treeString.toCharArray()) {
-                if (stack.size() == 1 && isAlphaNumeric(inString)) {
-                    this.insert(50, inString);
-                } else if (stack.size() == 1 && inString == '(' && levelTwoLeft.size() != 0) {
-                    left = false;
-                    stack.push(inString);
-                    tier++;
-                } else if (inString == '(') {
-                    stack.push(inString);
-                    tier++;
-                } else if (inString == ')') {
-                    stack.pop();
-                    tier--;
-                } else if (tier == 2) {
-                    levelOne.add(inString);
-                } else if (tier == 3) {
-                    System.out.println(leftOne);
-                    if (left && !leftOne) levelTwoLeft.add(inString);
-                    else levelTwoRight.add(inString);
-                }
-            }
-
-            System.out.println(levelOne);
-            int insertKey = 40;
-            for (int i = 0; i < levelOne.size(); i++) {
-                this.insert(insertKey, levelOne.get(i));
-                insertKey = insertKey + 40;
-            }
-
-            insertKey = 35;
-            for (int i = 0; i < levelTwoLeft.size(); i++) {
-                System.out.println(levelTwoLeft.get(i) + " " + insertKey);
-                this.insert(insertKey, levelTwoLeft.get(i));
-                insertKey = insertKey + 5;
-            }
-            insertKey = 75;
-            for (int i = 0; i < levelTwoRight.size(); i++) {
-                this.insert(insertKey, levelTwoRight.get(i));
-                insertKey = insertKey + 10;
-            }
-            setLeftCount();
-            setRightCount();
-
-            try {
-                inOrder();
-            } catch (StringIndexOutOfBoundsException e) {
-                throw new InvalidTreeSyntax(e.getMessage());
-            }
-        }
+    public void inorderTraversal() {
+        Node localRoot = root;
+        inorderTraversal(localRoot);
     }
+}
 
-    /**
-     * Node class for binary tree
-     */
-    private class Node {
-        public int iData;              // data item (key)
-        public char dData;           // data item
-        public Node leftChild;         // this node's left child
-        public Node rightChild;        // this node's right child
+/**
+ * Node class for binary tree
+ */
+class Node {
+    public int iData;              // data item (key)
+    public char dData;           // data item
+    public Node leftChild;         // this node's left child
+    public Node rightChild;        // this node's right child
+
+    Node(char dData) {
+        this.dData = dData;
     }
 }
