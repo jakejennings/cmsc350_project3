@@ -103,3 +103,23 @@ public class BinaryTreeFromString {
         inorderTraversal(root); // Output: C B D A F E G
     }
 }
+(A(G(j)(1))(z(5)))
+(A(G(j)(1))(z(5)(B)))
+(1(c(3)(G)))
+(A(G(j)(1))(z))
+(1(3)(G))
+(A(x(1)(3))(y(2)(4)))
+(A(B))
+(A(B(1)(2))(C(3)))
+(A(B(1)(2))(C(3)(4)))
+(K(D)(1))
+(K(D)(1(B)))
+(A(x(1)(3))(y(2)))
+(A(G(j)(1(3)(4)))(z(5)(7)))
+
+(A(x(1)(3))(y(2))
+A
+(A(B)
+Hello World
+(A(G(j)(1))(z(-6)
+(A(G(j)(1))(z)(-6)

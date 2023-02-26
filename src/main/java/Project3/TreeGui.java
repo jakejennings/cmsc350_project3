@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  *
  * Name: Jacob Jennings
- * Date: February 2, 2023
+ * Date: February 25, 2023
  * Class: CMSC 350
  * Project: Project 2
  * Professor: Dr. Romerl Elizes
@@ -68,31 +68,57 @@ public class TreeGui extends JPanel {
             String expression = treeInputField.getText();
             try {
                 binaryTree = new BinaryTree(expression);
+                treeOutputField.setText("Tree created");
             } catch (InvalidTreeSyntax ex) {
                 popException(ex);
             }
 
         });
+
         isBalancedButton.addActionListener(e -> {
-            popMessage("Tree is balanced: " + binaryTree.isBalanced());
+            if (binaryTree != null) {
+                treeOutputField.setText("Tree is balanced: " + binaryTree.isBalanced());
+            } else {
+                popException(new InvalidTreeSyntax("Make a tree first"));
+            }
         });
         isFullButton.addActionListener(e -> {
-            popMessage("Tree is full: " + binaryTree.isFull());
+            if (binaryTree != null) {
+                treeOutputField.setText("Tree is full: " + binaryTree.isFull());
+            } else {
+                popException(new InvalidTreeSyntax("Make a tree first"));
+            }
         });
 
         isProperButton.addActionListener(e -> {
-            popMessage("Tree is proper: " + binaryTree.isProper());
+            if (binaryTree != null) {
+            } else {
+                popException(new InvalidTreeSyntax("Make a tree first"));
+            }
+            treeOutputField.setText("Tree is proper: " + binaryTree.isProper());
         });
         getHeightButton.addActionListener(e -> {
-            popMessage("Tree height: " + binaryTree.getHeight());
+            if (binaryTree != null) {
+            } else {
+                popException(new InvalidTreeSyntax("Make a tree first"));
+            }
+            treeOutputField.setText("Tree height: " + binaryTree.getHeight());
         });
         getNodesButton.addActionListener(e -> {
-            popMessage("Tree nodes: " + binaryTree.getNodeCount());
+            if (binaryTree != null) {
+            treeOutputField.setText("Tree nodes: " + binaryTree.getNodeCount());
+            } else {
+                popException(new InvalidTreeSyntax("Make a tree first"));
+            }
         });
         getInorderButton.addActionListener(e -> {
-            String expression = binaryTree.inOrder();
-            treeOutputField.setText("");
-            treeOutputField.setText(expression);
+            if (binaryTree != null) {
+                String expression = binaryTree.inorderTraversal();
+                treeOutputField.setText("");
+                treeOutputField.setText(expression);
+            } else {
+                popException(new InvalidTreeSyntax("Make a tree first"));
+            }
         });
 
     }

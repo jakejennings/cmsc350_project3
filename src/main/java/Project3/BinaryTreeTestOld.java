@@ -14,7 +14,13 @@
  *********************************************************************************************************************/
 package Project3;
 
-public class BinaryTreeTest2 {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class BinaryTreeTestOld {
 
     private final static int MAX_STRING_LENGTH = 22;
     private Node root;
@@ -26,14 +32,13 @@ public class BinaryTreeTest2 {
 
 // -------------------------------------------------------------
 
-    public BinaryTreeTest2(String inputString) {
+    public BinaryTreeTestOld(String inputString) {
         root = null;
         leftSize = 0;
         rightSize = 0;
         isProperBoolean = true;
         String outputString = "";
-        root = stringToTree(inputString);
-        //parseTreeString(validateInput(inputString));
+        parseTreeString(validateInput(inputString));
     }
 
 
@@ -113,11 +118,11 @@ public class BinaryTreeTest2 {
             return leftProper && rightProper;
         }
     }
-/*
+
     /**
      * @param id key for node to be inserted
      * @param dd data to be inserted into node
-
+     */
     private void insert(int id, char dd) {
         Node newNode = new Node();
         newNode.iData = id;
@@ -146,7 +151,6 @@ public class BinaryTreeTest2 {
             }
         }
     }
-    */
 
     /**
      * @return String representation of the tree Inorder
@@ -317,7 +321,8 @@ public class BinaryTreeTest2 {
     /**
      * Method creates nodes in tree from input string
      *
-
+     * @param treeString String from constructor that has been validated.
+     */
     private void parseTreeString(String treeString) {
 
         Stack<Character> stack = new Stack<>();
@@ -385,83 +390,15 @@ public class BinaryTreeTest2 {
                 throw new InvalidTreeSyntax(e.getMessage());
             }
         }
-    }*/
-        public Node stringToTree(String str) {
-            if (str.isEmpty()) {
-                return null;
-            }
-            int firstParen = str.indexOf("(");
-            char val = str.charAt(0);
-            Node root = new Node(val);
-            if (firstParen == -1) {
-                return root;
-            }
-            int start = firstParen, leftParenCount = 0;
-            for (int i = start; i < str.length(); i++) {
-                if (str.charAt(i) == '(') {
-                    leftParenCount++;
-                } else if (str.charAt(i) == ')') {
-                    leftParenCount--;
-                }
-                if (leftParenCount == 0 && start == firstParen) {
-                    root.leftChild = stringToTree(str.substring(start + 1, i));
-                    start = i + 1;
-                } else if (leftParenCount == 0) {
-                    root.rightChild = stringToTree(str.substring(start + 1, i));
-                }
-            }
-            return root;
-        }
-    public void inorderTraversal() {
-            Node currentRoot = root;
-            inorderTraversal(root, false);
     }
-    public void inorderTraversal(Node root, boolean isLastNode) {
-        if (root != null) {
-            boolean hasChildren = (root.leftChild != null || root.rightChild != null);
-            if (hasChildren) {
-                outputString = outputString + "(";
-                System.out.print("(");
-            }
-            inorderTraversal(root.leftChild, false);
-            if (hasChildren) {
-                outputString = outputString + ")";
-                System.out.print(")");
-            }
-            outputString = outputString + root.dData;
-            System.out.print(root.dData);
-
-            if (hasChildren && !isLastNode) {
-                outputString = outputString + "(";
-                System.out.print("(");
-            }
-            inorderTraversal(root.rightChild, isLastNode);
-            if (hasChildren && !isLastNode) {
-                outputString = outputString + ")";
-                System.out.print(")");
-            }
-        }
-    }
-
-        public static void main(String[] args) {
-            String s = "(A(B(C)(D))(E(F)(G)))";
-            BinaryTreeTest2 tree = new BinaryTreeTest2(s);
-            //Node root = stringToTree(s);
-            tree.inorderTraversal(); // Output: C B D A F E G
-            System.out.println("\n" + tree.outputString);
-        }
 
     /**
      * Node class for binary tree
      */
-    static class Node {
+    private class Node {
         public int iData;              // data item (key)
         public char dData;           // data item
         public Node leftChild;         // this node's left child
         public Node rightChild;        // this node's right child
-
-        Node(char key) {
-            dData = key;
-        }
     }
 }
